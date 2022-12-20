@@ -1,0 +1,28 @@
+// package main
+
+// import (
+// 	"bufio"
+// 	"fmt"
+// 	"io/fs"
+// 	"os"
+// )
+
+// func main() {
+
+// 	fr, _ := os.Open("file.txt")
+// 	fw, _ := os.Create("write.txt")
+
+// 	r := bufio.NewReader(fr)
+// 	r.ReadString(byte(' '))
+// 	fmt.Println(r.Buffered())
+
+// 	r.WriteTo()
+
+// 	os.ReadFile()
+// 	os.WriteFile()
+// 	os.Open()
+// 	osfile, _ := os.OpenFile("somefile", os.O_CREATE, fs.ModeAppend)
+
+// 	osfile.Stat()
+
+// }
