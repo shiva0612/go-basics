@@ -2,5 +2,7 @@
 
 ## this repository provides information about the following:
 
-1.  concurrency concepts
+1.  basic concepts in Golang
 2.  major mistakes and how to avoid 
+3.  concurrent programming with Golang
+4.  important go tools/ ext pkgs(which eases the workflow)
