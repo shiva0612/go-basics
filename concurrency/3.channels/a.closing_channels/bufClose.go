@@ -5,22 +5,9 @@ import "fmt"
 func BufEg() {
 	ch := make(chan int, 3)
 	BufProduce(ch)
-	// BufConsume(ch)
-	BufConsumeContinuous(ch)
+	BufConsume(ch)
 	// BufConsumeForRange(ch)
 
-}
-
-func BufConsumeContinuous(ch chan int) {
-	i := 0
-	for {
-		n, _ := <-ch
-		if i == 5 {
-			break
-		}
-		fmt.Println("n = ", n)
-		i++
-	}
 }
 
 func BufConsume(ch chan int) {
@@ -32,6 +19,11 @@ func BufConsume(ch chan int) {
 		fmt.Println("n = ", n)
 	}
 }
+
+// for range will keep on reading from channel until closed
+// once closed
+// if buffered channel:only read the remaining data and exit
+// if unbuffered channel: will exit immediately (only 1 read and 1 write at a time happens this unbuffered channel)
 func BufConsumeForRange(ch chan int) {
 	for n := range ch {
 		fmt.Println("n = ", n)

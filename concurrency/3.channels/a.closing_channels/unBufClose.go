@@ -6,21 +6,8 @@ func UnBuf() {
 	ch := make(chan int)
 	go UnBufProduce(ch)
 	// UnBufConsume(ch)
-	// UnBufConsumeContinuous(ch)
 	UnBufConsumeForRange(ch)
 
-}
-
-func UnBufConsumeContinuous(ch chan int) {
-	i := 0
-	for {
-		n, _ := <-ch
-		if i == 8 {
-			break
-		}
-		fmt.Println("n = ", n)
-		i++
-	}
 }
 
 func UnBufConsume(ch chan int) {

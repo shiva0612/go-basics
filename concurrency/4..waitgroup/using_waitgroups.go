@@ -2,27 +2,24 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
-var wg sync.WaitGroup
-
-func main() {
-
+func waiting_using_waitgroups() {
 	wg.Add(2)
 	go for1()
 	go for2()
 
 	wg.Wait()
-	fmt.Println("main end")
+	fmt.Println("waiting_using_waitgroups DONE")
+
 }
 
 func for1() {
 	defer wg.Done()
 	for i := 0; i < 5; i++ {
 
-		fmt.Println(".")
+		fmt.Print(".")
 		time.Sleep(100 * time.Millisecond)
 
 	}
@@ -31,7 +28,7 @@ func for2() {
 	defer wg.Done()
 	for i := 0; i < 5; i++ {
 
-		fmt.Println("*")
+		fmt.Print("*")
 		time.Sleep(100 * time.Millisecond)
 
 	}
