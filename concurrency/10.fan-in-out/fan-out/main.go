@@ -5,31 +5,40 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sync"
 )
 
-var wg = &sync.WaitGroup{}
-
-// What is the Fan-Out concurrency pattern?
-// Breakup of one channel into multiple ones by distributing each value.
 func main() {
-	ch1, err := readCSV("file1.csv")
+	ch1, err := read("file1.csv")
 	if err != nil {
-		panic(fmt.Errorf("Could not read file1 %v\n", err))
+		panic(fmt.Errorf("Could not read file1 %v", err))
 	}
 
 	//-
 
-	for i := 0; i < 3; i++ {
-		wg.Add(1)
-		go func(i int, ch1 <-chan []string) {
-			defer wg.Done()
-			for v := range ch1 {
-				fmt.Println("got ", v, " in", i)
+	br1 := breakup("1", ch1)
+	br2 := breakup("2", ch1)
+	br3 := breakup("3", ch1)
+
+	for {
+		if br1 == nil && br2 == nil && br3 == nil {
+			break
+		}
+
+		select {
+		case _, ok := <-br1:
+			if !ok {
+				br1 = nil
 			}
-		}(i, ch1)
+		case _, ok := <-br2:
+			if !ok {
+				br2 = nil
+			}
+		case _, ok := <-br3:
+			if !ok {
+				br3 = nil
+			}
+		}
 	}
-	wg.Wait()
 
 	fmt.Println("All completed, exiting")
 }
@@ -48,10 +57,10 @@ func breakup(worker string, ch <-chan []string) chan struct{} {
 	return chE
 }
 
-func readCSV(file string) (<-chan []string, error) {
+func read(file string) (<-chan []string, error) {
 	f, err := os.Open(file)
 	if err != nil {
-		return nil, fmt.Errorf("opening file %v\n", err)
+		return nil, fmt.Errorf("opening file %v", err)
 	}
 
 	ch := make(chan []string)

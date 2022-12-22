@@ -6,20 +6,26 @@ import (
 	"sync/atomic"
 )
 
-func f(v *uint32, wg *sync.WaitGroup) {
-	for i := 0; i < 3000; i++ {
-		atomic.AddUint32(v, 1)
-	}
-	wg.Done()
-}
+var x = int32(0)
+var wg *sync.WaitGroup
 
 func main() {
-	var v uint32 = 42
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go f(&v, &wg)
-	go f(&v, &wg)
+	wg = &sync.WaitGroup{}
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		// go incr_without_atomics()
+		go incr_with_atomics()
+	}
 	wg.Wait()
+	fmt.Println("x = ", x)
+}
 
-	fmt.Println(v)
+func incr_without_atomics() {
+	defer wg.Done()
+	x += 1
+}
+
+func incr_with_atomics() {
+	defer wg.Done()
+	atomic.AddInt32(&x, 1)
 }

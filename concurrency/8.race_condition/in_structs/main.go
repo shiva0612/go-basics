@@ -19,13 +19,15 @@ func main() {
 
 	for i := 0; i < 1000; i++ {
 		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			p.Lock()
-			p.Count += 1
-			p.Unlock()
-		}()
+		go incr()
 	}
 	wg.Wait()
 	fmt.Println("count = ", p.Count)
+}
+func incr() {
+
+	defer wg.Done()
+	p.Lock()
+	p.Count += 1
+	p.Unlock()
 }

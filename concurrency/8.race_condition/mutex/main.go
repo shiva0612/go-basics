@@ -6,20 +6,28 @@ import (
 )
 
 var x = 0
+var wg *sync.WaitGroup
+var m = sync.Mutex{}
 
-func increment(wg *sync.WaitGroup, m *sync.Mutex) {
-	m.Lock()
-	x = x + 1
-	m.Unlock()
-	wg.Done()
-}
 func main() {
-	var w sync.WaitGroup
-	var m sync.Mutex
-	for i := 0; i < 1000; i++ {
-		w.Add(1)
-		go increment(&w, &m)
+	wg = &sync.WaitGroup{}
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		// go incr_without_mutex()
+		go incr_with_mutex()
 	}
-	w.Wait()
-	fmt.Println("final value of x", x)
+	wg.Wait()
+	fmt.Println("x = ", x)
+}
+
+func incr_without_mutex() {
+	defer wg.Done()
+	x += 1
+}
+
+func incr_with_mutex() {
+	defer wg.Done()
+	m.Lock()
+	x += 1
+	m.Unlock()
 }

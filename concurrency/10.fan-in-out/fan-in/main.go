@@ -21,52 +21,32 @@ func main() {
 		panic(fmt.Errorf("Could not read file2 %v\n", err))
 	}
 
-	//-
+	chM := merge_channels(ch1, ch2)
 
-	exit := make(chan struct{})
-
-	// chM := merge1(ch1, ch2)
-	chM := merge1(ch1, ch2)
-
-	go func() {
-		for v := range chM {
-			fmt.Println(v)
-		}
-
-		close(exit)
-	}()
-
-	<-exit
+	for v := range chM {
+		fmt.Println(v)
+	}
 
 	fmt.Println("All completed, exiting")
 }
-
-func merge1(cs ...<-chan []string) <-chan []string {
-	var wg sync.WaitGroup
-
-	out := make(chan []string)
-
-	send := func(c <-chan []string) {
-		for n := range c {
-			out <- n
-		}
-
-		wg.Done()
-	}
-
-	wg.Add(len(cs))
-
-	for _, c := range cs {
-		go send(c)
-	}
+func merge_channels(cs ...<-chan []string) <-chan []string {
+	merged_ch := make(chan []string)
 
 	go func() {
+		defer close(merged_ch)
+		wg := &sync.WaitGroup{}
+		wg.Add(len(cs))
+		for i := 0; i < len(cs); i++ {
+			go func(ch <-chan []string) {
+				for row := range ch {
+					merged_ch <- row
+				}
+			}(cs[i])
+		}
 		wg.Wait()
-
-		close(out)
 	}()
 
-	return out
+	return merged_ch
 }
 
 func readCSV(file string) (<-chan []string, error) {

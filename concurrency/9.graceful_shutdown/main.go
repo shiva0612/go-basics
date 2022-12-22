@@ -9,12 +9,22 @@ import (
 	"time"
 )
 
+/*
+SIGHUP	1	Hang up detected on controlling terminal or death of controlling process (closing the termianl)
+SIGINT	2	Issued if the user sends an interrupt signal (Ctrl + C)
+SIGQUIT	3	Issued if the user sends a quit signal (Ctrl + D)
+SIGKILL	9	If a process gets this signal it must quit immediately and will not perform any clean-up operations
+SIGTERM	15 Software termination signal (sent by kill by default)
+
+os.Interrupt, syscall.SIGHUP, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
+*/
 func main() {
 	// normal()
 	advanced()
 }
 
 func advanced() {
+	//you can use this context in all goroutines spun from main, and cancel them as ctrl+c is pressed using context
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT)
 	defer func() {
 		fmt.Println("end advanced")

@@ -10,12 +10,6 @@ import (
 	"strings"
 )
 
-/**
-Pipeline concurrency pattern
-What is a Pipeline?
-	...chain of processing elements arranged so that the output
-	of each element is the input of the next one... (from Wikipedia)
-*/
 func main() {
 	recordsC, err := readCSV("file1.csv")
 	if err != nil {
