@@ -16,7 +16,10 @@ go tool cover  -html=coverage.output #to see the report in a html format
 
 ##  checking for race conditions
 ```
-go build --race
+go build --race main.go
+./main.go (will give warning if race condition)
+
+for test files
 go test ./... -race (to check if any race condition errors)
 
 ```
@@ -49,10 +52,14 @@ func TestMain(m *testing.M) {
 go test file.go -v
 ```
 
-## at the top of the file mention the below line
+## using tags to run specific tests all at once
+
 ```
+add these lines above package declaration
 // +build unit
 // +build integration
-go test -tags=unit -v
-go test -tags=integration -v
+
+use the bellow command to run specific tests mentioned in tags flag
+go test ./... --tags=unit -v
+go test ./... --tags=integration -v
 ```
