@@ -21,6 +21,22 @@ go test ./... -race (to check if any race condition errors)
 
 ```
 
+## benchmarking
+```
+#run flag to only run those tests funcs whose name start with Benchmark
+go test ./... -run=Benchmark -bench=. -benchtime=5s -count=5 -benchmem
+go test ./... -run=Benchmark -bench=. -benchtime=100x -count=5 -benchmem
+
+100x = run benchmark 100 times rather than b.N
+5s = run benchmark 5s 
+
+
+go test -bench=. -count 2 -benchtime=2s -cpu=1 -benchmem -memprofile memprofile.out -cpuprofile profile.out
+go tool pprof memprofile.out
+top
+list function_name
+```
+
 
 ##  testing main - not IMP
 ```
