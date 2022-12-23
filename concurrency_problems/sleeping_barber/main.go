@@ -47,7 +47,7 @@ func NewBarber() (b *Barber) {
 func barber(b *Barber, wr chan *Customer, wakers chan *Customer) {
 	for {
 		b.Lock()
-		defer b.Unlock()
+		// defer b.Unlock()
 		b.state = checking
 		b.customer = nil
 
@@ -57,7 +57,7 @@ func barber(b *Barber, wr chan *Customer, wakers chan *Customer) {
 		select {
 		case c := <-wr:
 			HairCut(c, b)
-			b.Unlock()
+			// b.Unlock()
 		default: // Waiting room is empty
 			fmt.Printf("Barber goes to sleep \n")
 			b.state = sleeping
@@ -67,7 +67,7 @@ func barber(b *Barber, wr chan *Customer, wakers chan *Customer) {
 			b.Lock()
 			fmt.Printf("Woken by %s\n", c)
 			HairCut(c, b)
-			b.Unlock()
+			// b.Unlock()
 		}
 	}
 }
@@ -75,12 +75,15 @@ func barber(b *Barber, wr chan *Customer, wakers chan *Customer) {
 func HairCut(c *Customer, b *Barber) {
 	b.state = cutting
 	b.customer = c
-	b.Unlock() // while cutting hair, barber is unlocked since, customers who came after sees him cut hair and waits in waiting room
 	fmt.Printf("Cutting  %s hair\n", c)
+	b.Unlock() // while cutting hair, barber is unlocked since, customers who came after sees him cut hair and waits in waiting room
+
 	time.Sleep(time.Millisecond * 100)
+
 	b.Lock() //we lock - make customer nil - unlock
 	wg.Done()
 	b.customer = nil
+	b.Unlock()
 }
 
 // customer goroutine
